@@ -1,0 +1,9 @@
+version: '2.1'
+services:
+ metricbeat:
+   image: metricbeat
+   build:
+     context: . 
+   network_mode: "host"
+
+
