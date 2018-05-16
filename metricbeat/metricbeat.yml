@@ -63,7 +63,7 @@ metricbeat.modules:
     #- diskio         # Disk IO
     #- socket         # Sockets and connection info (linux only)
   enabled: true
-  period: 15s
+  period: 8s
   processes: ['.*']
 
   # Configure the metric types that are included by these metricsets.
