@@ -113,7 +113,7 @@ metricbeat.modules:
 
 - module: jolokia
   metricsets: ["jmx"]
-  hosts: ["192.168.0.2:8778"]
+  hosts: ["127.0.0.1:8778"]
   path: "/jolokia/?ignoreErrors=true&canonicalNaming=false"
   namespace: "metrics"
   jmx.mappings:
