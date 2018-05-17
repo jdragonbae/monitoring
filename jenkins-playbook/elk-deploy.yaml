@@ -20,3 +20,8 @@
         build: yes
       become: yes
       become_method: su 
+    - name: start logging elk
+      shell: 'docker-compose logs -t -f >> ../elk.log&'
+      args:
+       chdir: ../elk 
+
