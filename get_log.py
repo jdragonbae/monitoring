@@ -29,14 +29,14 @@ def record_new_log():
 
 	with open(filename, 'a') as appendfile:
 		
-		#================
+		#=================
 		# index
 		#=================
 		appendfile.write(str(line_count)+";")
 		post_data['index'] = line_count
 
 
-		#================
+		#=================
 		# datetime.now()
 		#=================
 		appendfile.write(str(datetime.datetime.now())+";")
@@ -102,8 +102,14 @@ def record_new_log():
 		param = urllib.urlencode(post_data)
 		headers = {"Content-type":"application/x-www-form-urlencoded"}
 		conn = httplib.HTTPConnection(jenkins_server)
-		conn.request("POST", "", param, headers)
-		conn.close()
+
+		post_attempt_counter = 0
+		while post_attempt_counter < 5:
+			conn.request("POST", "", param, headers)
+			response = conn.getresponse()
+			conn.close()
+			if response.status == 200:
+				break
 
 		#=================
 		# loop

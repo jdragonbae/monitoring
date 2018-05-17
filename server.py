@@ -11,7 +11,7 @@ class Server(BaseHTTPRequestHandler):
 
     def do_GET(self):
         self._set_headers()
-        self.wfile.write("Works")
+        self.wfile.write("Received GET request.")
 
     def do_POST(self):
 
@@ -40,8 +40,10 @@ class Server(BaseHTTPRequestHandler):
             appendfile.write(fields.get("rxpck/s")[0]+";")
             appendfile.write(fields.get("txpck/s")[0]+";")        
             appendfile.write("\n")
-        print "POST received."
-        
+
+        self._set_headers()
+        self.wfile.write("Received POST request.")
+
 
 def run(server_class=HTTPServer, handler_class=Server, port=80):
     server_address = ('', port)
