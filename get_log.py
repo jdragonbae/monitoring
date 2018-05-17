@@ -5,6 +5,8 @@ import datetime
 
 
 filename = "hackday.log"
+if sys.argv[1] in ["deployed", "deploy", "d"]:
+	filename = "hackday_deployed.log"
 
 if not os.path.isfile(filename):
 	with open(filename, 'w') as writefile:
