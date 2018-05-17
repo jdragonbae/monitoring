@@ -10,4 +10,10 @@ print df.columns.tolist()
 
 for column in df.columns.tolist():
 	if (column in number_type_logs):
-		print column + " " + str(df[column].mean())
+		line = column + ":: "
+		line += "\tmean: " + str(df[column].mean())
+		line += "\tmedian: " + str(df[column].median())
+		line += "\tmax: " + str(df[column].max())
+		line += "\tmin: " + str(df[column].min())
+
+		print line

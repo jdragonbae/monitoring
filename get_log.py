@@ -76,7 +76,6 @@ with open(filename, 'a') as appendfile:
 	# end logging
 	#=================
 	appendfile.write("\n")
-	print "Logging complete."
 
 
 #=================
