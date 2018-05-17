@@ -4,180 +4,51 @@
     <title>Deploy-Monitoring</title>
 </head>
 
+<!--css-->
+<link rel='stylesheet' type='text/css' href='style.css'>
 
-<link rel="stylesheet" type="text/css" href="style.css">
+<!--lib-->
+<script src='./node_modules/jui-chart/dist/chart.js'></script>
+<script src='./node_modules/jquery/dist/jquery.min.js'></script>
+<script src='./node_modules/elasticsearch-browser/elasticsearch.js'></script>
+<script src='./node_modules/elasticsearch-browser/elasticsearch.jquery.min.js'></script>
 
-<script src="./node_modules/jui-chart/dist/chart.js"></script>
-<script src="./node_modules/jquery/dist/jquery.min.js"></script>
-<script src="./node_modules/elasticsearch-browser/elasticsearch.js"></script>
-<script src="./node_modules/elasticsearch-browser/elasticsearch.jquery.min.js"></script>
+<!--model-->
+<script src='./js/model/lineChart.js'></script>
+<script src='./js/model/pieChart.js'></script>
 
 <script>
     var client = new $.es.Client({
-        hosts: 'http://localhost:9200'
+        hosts: 'http://106.10.41.29:9200'
     });
 
-    class LineChart {
-
-        constructor(_index, _type, _field, _selector, _chart, _text) {
-            this.index = _index;
-            this.type = _type;
-            this.field = _field;
-            var text = _text;
-            var data = [];
-            var chart = 0;
-
-            jui.ready(["util.base", "util.time", "chart.builder"], function (_, time, builder) {
-                chart = builder('#' + _selector, {
-                    width: 400,
-                    height: 100,
-                    axis: {
-                        x: {
-                            type: "dateblock",
-                            domain: [new Date() - 1000 * 60 * 5, new Date()],
-                            interval: 1,
-                            realtime: "minutes",
-                            format: "hh:mm"
-                        },
-                        y: {
-                            type: "range",
-                            domain : [0,100]
-                            //domain: function (d) {
-                            //    return 1.1 * Math.max.apply(Math, data.map(function (o) { return o.latestData; }))
-                            //}
-                        }
-                    },
-                    brush: {
-                        type: "line",
-                        target: ["latestData", "avgData"],
-                        useEvent: false
-                    },
-                    widget: [{
-                        type: "cross",
-                        yFormat: function (d) {
-                            return d.toFixed(3);
-                        },
-                    }, {
-                        type: "title",
-                        text: text,
-                        align: "end",
-                    }],
-
-                    render: false
-                });
-
-                initData(100);
-            });
-
-            function getLatestData(callback) {
-                client.search({
-                    index: index,
-                    type: type,
-                    body: {
-                        "query": { "match_all": {} },
-                        "_source": [field, "@timestamp"],
-                        "size": 1,
-                        "sort": [
-                            {
-                                "@timestamp": {
-                                    "order": "desc"
-                                }
-                            }
-                        ]
-                    }
-                }).then(function (resp) {
-                    console.log("All is well " + resp);
-                    callback(eval("resp.hits.hits[0]._source." + field) * 100);
-                }, function (err) {
-                    console.log(err);
-                    //console.trace(err.message);
-                    callback(0);
-                });
-            }
-
-            function getAvgData(callback) {
-                client.search({
-                    index: index,
-                    type: type,
-                    body: {
-                        "query": {
-                            "range": {
-                                "@timestamp": {
-                                    "gte": "now-5m",
-                                    "lt": "now"
-                                }
-                            }
-                        },
-                        "size": 0,
-                        "aggs": {
-                            "avg_usage": {
-                                "avg": {
-                                    "field": field
-                                }
-                            }
-                        }
-                    }
-                }).then(function (resp) {
-                    callback(resp.aggregations.avg_usage.value * 100);
-                }, function (err) {
-                    console.trace(err.message);
-                    callback(0);
-                });
-            }
-
-            function initData(count) {
-                getAvgData(function (_avgData) {
-                    for (var i = 0; i < count; i++) {
-                        data[i] = {
-                            latestData: 0,
-                            avgData: _avgData
-                        };
-                    }
-                    interval();
-                });
-            }
-
-            function interval() {
-                setInterval(function () {
-                    var end = new Date(),
-                        start = new Date() - 1000 * 60 * 5,
-                        domain = [start, end];
-
-                    data.shift();
-
-                    getLatestData(function (_latestData) {
-                        getAvgData(function (_avgData) {
-                            data.push({
-                                latestData: _latestData,
-                                avgData: _avgData
-                            });
-                        });
-                    });
-
-                    chart.axis(0).updateGrid("x", { domain: domain });
-                    chart.axis(0).update(data);
-                    chart.render();
-                }, 3000);
-            }
+    client.ping({
+        requestTimeout: 30000,
+    }, function (error) {
+        if (error) {
+            console.error('elasticsearch cluster is down!');
+        } else {
+            console.log('All is well');
+            new LineChart('cpu-jy-app002', 'doc', 'system.cpu.user.pct', 'cpuChart', 'Cpu(%)');
+            new LineChart('memory-jy-app002', 'doc', 'system.memory.used.pct', 'memoryChart', 'Memory(%)');
+            new PieChart('filesystem-jy-app002','doc', 'system.filesystem.used.pct','diskChart','Disk(%)');
         }
-    };
-
-    var index = "memory-jy-app002-2018.05.16";
-    var type = "doc";
-    var field = "system.cpu.user.pct";
-    new LineChart(index, type, field, "cpuChart","CPU USAGE");
-    new LineChart("memory-jy-app002-2018.05.16", type, field, "cpuChart","memory");
-
-
+    });
 </script>
 
 </head>
+
 <body>
-    <div id="dashboard">
-        <div id="cpuChart">
+    <div id='dashboard'>
+        <div id='cpuChart'>
         </div>
-        <div id="memoryChart">
+        <div id='memoryChart'>
+        </div>
+        <div id='diskChart'>
         </div>
     </div>
+    </div>
+
 </body>
+
 </html>
