@@ -8,6 +8,7 @@ filename = "hackday.log"
 
 if not os.path.isfile(filename):
 	with open(filename, 'w') as writefile:
+		writefile.write("index;")
 		writefile.write("time;")
 		writefile.write("cpu-0-idle;cpu-1-idle;")
 		writefile.write("free-mem;")
@@ -15,9 +16,15 @@ if not os.path.isfile(filename):
 		
 		writefile.write("\n")
 
+line_count = sum(1 for line in open(filename))
 
 with open(filename, 'a') as appendfile:
 	
+	#================
+	# index
+	#=================
+	appendfile.write(str(line_count)+";")
+
 	#================
 	# datetime.now()
 	#=================
@@ -70,3 +77,11 @@ with open(filename, 'a') as appendfile:
 	#=================
 	appendfile.write("\n")
 	print "Logging complete."
+
+
+#=================
+# output
+#=================
+with open(filename, 'r') as readfile:
+	for line in readfile:
+		sys.stdout.write(line)
