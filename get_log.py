@@ -4,9 +4,11 @@ import subprocess
 import datetime
 import time
 import threading
+import urllib, httplib
 
 
 filename = "hackday.log"
+jenkins_server = "10.41.3.244"
 
 def create_file():
 	if not os.path.isfile(filename):
@@ -23,6 +25,7 @@ def create_file():
 def record_new_log():
 
 	line_count = sum(1 for line in open(filename))
+	post_data = {}
 
 	with open(filename, 'a') as appendfile:
 		
@@ -30,12 +33,14 @@ def record_new_log():
 		# index
 		#=================
 		appendfile.write(str(line_count)+";")
+		post_data['index'] = line_count
 
 
 		#================
 		# datetime.now()
 		#=================
 		appendfile.write(str(datetime.datetime.now())+";")
+		post_data['time'] = str(datetime.datetime.now())
 
 
 		#=================
@@ -49,6 +54,10 @@ def record_new_log():
 			if counter in [5, 6]:
 				values = line.split()
 				appendfile.write(values[12]+";")
+				if counter == 5:
+					post_data['cpu-0-idle'] = values[12]
+				if counter == 6:
+					post_data['cpu-1-idle'] = values[12]
 
 
 		#=================
@@ -62,6 +71,7 @@ def record_new_log():
 			if counter == 2:
 				values = line.split()
 				appendfile.write(values[1]+";")
+				post_data['free-mem'] = values[1]
 				break
 
 
@@ -76,6 +86,8 @@ def record_new_log():
 			if counter == 8:
 				values = line.split()
 				appendfile.write(values[2]+";"+values[3]+";")
+				post_data['rxpck/s'] = values[2]
+				post_data['txpck/s'] = values[3]
 				break
 		
 		
@@ -83,6 +95,17 @@ def record_new_log():
 		# end logging
 		#=================
 		appendfile.write("\n")
+
+		#=================
+		# POST to jenkins
+		#=================
+		param = urllib.urlencode(post_data)
+		headers = {"Content-type":"application/x-www-form-urlencoded"}
+		conn = httplib.HTTPConnection(jenkins_server)
+		conn.request("POST", "", param, headers)
+		response = conn.getresponse().read()
+		print response
+		conn.close()
 
 		#=================
 		# loop
