@@ -103,8 +103,6 @@ def record_new_log():
 		headers = {"Content-type":"application/x-www-form-urlencoded"}
 		conn = httplib.HTTPConnection(jenkins_server)
 		conn.request("POST", "", param, headers)
-		response = conn.getresponse().read()
-		print response
 		conn.close()
 
 		#=================
