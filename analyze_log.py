@@ -1,6 +1,7 @@
 import sys, os
 import pandas
 import numpy
+import datetime
 from scipy import stats
 
 
@@ -10,15 +11,23 @@ servers = ['10.41.2.31', '10.41.1.25', '10.41.5.49', '10.41.2.41', '10.41.0.232'
 for server in servers:
 	if os.path.isfile("hackday_logs/"+server+".log"):
 		df = pandas.read_csv("hackday_logs/"+server+".log", sep=';')
-		df = df.tail(100)
+
+		#=================
+		# use data from since 1 hour ago
+		#=================
+		df['time'] = pandas.to_datetime(df['time'])
+		start_time = datetime.datetime.now() - datetime.timedelta(hours = 1)
+		end_time = datetime.datetime.now()
+		mask = (df['time'] > start_time) & (df['time'] <= end_time)
+		df = df.loc[mask]
+
+		print df.describe()
 
 		columns = df.columns.tolist()
 		for column in columns:
 			if column not in number_type_logs:
 				df.drop(column, axis=1, inplace=True)
 		
-		print df.describe()
-
 		for col in df.columns.tolist():
 			
 			#=================

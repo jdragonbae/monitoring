@@ -101,7 +101,7 @@ def record_new_log():
 		#=================
 		param = urllib.urlencode(post_data)
 		headers = {"Content-type":"application/x-www-form-urlencoded"}
-		conn = httplib.HTTPConnection(jenkins_server)
+		conn = httplib.HTTPConnection(jenkins_server, timeout=1)
 
 		post_attempt_counter = 0
 		while post_attempt_counter < 5:
