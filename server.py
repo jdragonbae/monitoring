@@ -23,13 +23,13 @@ class Server(BaseHTTPRequestHandler):
         fields = urlparse.parse_qs(field_data)
 
     	if not os.path.isfile(filename):
-    		with open(filename, 'w') as writefile:
-            writefile.write("index;")
-            writefile.write("time;")
-            writefile.write("cpu-0-idle;cpu-1-idle;")
-            writefile.write("free-mem;")
-            writefile.write("rxpck/s;txpck/s;")
-            writefile.write("\n")
+            with open(filename, 'w') as writefile:
+                writefile.write("index;")
+                writefile.write("time;")
+                writefile.write("cpu-0-idle;cpu-1-idle;")
+                writefile.write("free-mem;")
+                writefile.write("rxpck/s;txpck/s;")
+                writefile.write("\n")
 
         with open(filename, 'a') as appendfile:
             appendfile.write(fields.get("index")[0]+";")
