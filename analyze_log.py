@@ -26,10 +26,10 @@ for server in servers:
 			#=================
 			if (col in ['rxpck/s', 'txpck/s']):
 				if (df[col].std() > df[col].mean()*5):
-					print "possible issue in: server "+server+" col "+col						
 					print "possible issue in: server "+server+" col "+col
-			elif (df[col].std() > df[col].mean()/10):
-				print "possible issue in: server "+server+" col "+col
+			else:
+				if (df[col].std() > df[col].mean()/10):
+					print "possible issue in: server "+server+" col "+col
 			
 			#=================
 			# percent usage
