@@ -1,0 +1,39 @@
+---
+- hosts: appservers
+  remote_user: hackday
+  tasks:
+    - name: remove metricbeat
+      file:
+       state: absent
+       path: /home/hackday/metricbeat
+      become: yes
+      become_method: su
+      ignore_errors: True
+    - name: copy metricbeat
+      copy: src=./deploy-monitoring/metricbeat dest=/home/hackday/
+    - name: chmod config file
+      file:
+        path: /home/hackday/metricbeat/metricbeat.yml
+        owner: hackday
+        group: hackday
+        mode: 0755
+      become: yes
+      become_method: su
+    - name: start docker service
+      systemd:
+        name: docker
+        state: started
+      become: yes
+      become_method: su
+    - name: kill metricbeat container
+      docker_service:
+        project_src: /home/hackday/metricbeat
+        state: absent
+      become: yes
+      become_method: su
+    - name: start metricbeat container
+      docker_service:
+        project_src: /home/hackday/metricbeat
+        build: yes
+      become: yes
+      become_method: su

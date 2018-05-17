@@ -1,0 +1,36 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+    - name: kill elk container
+      docker_service:
+        project_src: ../hackday-monitoring-deploy/deploy-monitoring/elk
+        state: absent
+      become: yes
+      become_method: su
+      ignore_errors: True
+ 
+- hosts: appservers
+  remote_user: hackday
+  tasks:
+    - name: kill metricbeat container
+      docker_service:
+        project_src: /home/hackday/metricbeat
+        state: absent
+      become: yes
+      become_method: su
+      ignore_errors: True
+    - name: remove metricbeat
+      file:
+       state: absent
+       path: /home/hackday/metricbeat
+      become: yes
+      become_method: su
+      ignore_errors: True
+    - name: remove get-pip
+      file:
+       state: absent
+       path: /home/hackday/get-pip.py
+      become: yes
+      become_method: su
+      ignore_errors: True

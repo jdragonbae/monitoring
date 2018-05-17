@@ -1,0 +1,48 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+    - name: download pip
+      shell: 'curl -k -O https://bootstrap.pypa.io/get-pip.py'
+    - name: install pip
+      shell: 'python get-pip.py'
+      become: yes
+      become_method: su
+    - name: pip install docker-compose
+      pip:
+        name: docker-compose
+      become: yes
+      become_method: su
+
+- hosts: appservers
+  remote_user: hackday
+  tasks:
+    - name: install the latest version of Docker
+      yum:
+       name: docker
+       state: latest
+      become: yes
+      become_method: su
+      ignore_errors: True
+    - name: download pip
+      shell: 'curl -k -O https://bootstrap.pypa.io/get-pip.py'
+    - name: install pip
+      shell: 'python get-pip.py'
+      become: yes
+      become_method: su
+    - name: pip install docker-compose
+      pip:
+        name: docker-compose
+      become: yes
+      become_method: su
+    - name: copy jolokia.jar
+      copy: src=./jolokia-jvm-1.5.0-agent.jar dest=/home/hackday/
+    - name: make executable jolokia.jar
+      file:
+        path: /home/hackday/jolokia-jvm-1.5.0-agent.jar
+        owner: hackday
+        group: hackday
+        mode: 0755
+      become: yes
+      become_method: su
+
