@@ -4,9 +4,12 @@ import subprocess
 import datetime
 
 
-filename = "hackday.log"
-if sys.argv[1] in ["deployed", "deploy", "d"]:
-	filename = "hackday_deployed.log"
+filename_normal = "hackday_normal.log"
+filename_deployed = "hackday_deployed.log"
+
+filename = filename_normal
+if len(sys.argv) > 1 and sys.argv[1] in ["deployed", "deploy", "d"]:
+	filename = filename_deployed
 
 if not os.path.isfile(filename):
 	with open(filename, 'w') as writefile:
