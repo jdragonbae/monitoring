@@ -15,7 +15,7 @@
     - name: execute server
       systemd:
         name: hackday 
-        state: started
+        state: stopped
       become: yes
       become_method: su
     - name: reload server

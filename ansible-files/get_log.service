@@ -1,5 +1,5 @@
 [Unit]
-Description=get_log
+Description=getlog
 After=syslog.target
 
 [Service]
