@@ -20,9 +20,24 @@ for server in servers:
 		print df.describe()
 
 		for col in df.columns.tolist():
+			
+			#=================
+			# mean vs stdev
+			#=================
 			if (col in ['rxpck/s', 'txpck/s']):
 				if (df[col].std() > df[col].mean()*5):
 					print "possible issue in: server "+server+" col "+col						
+					print "possible issue in: server "+server+" col "+col
 			elif (df[col].std() > df[col].mean()/10):
 				print "possible issue in: server "+server+" col "+col
+			
+			#=================
+			# percent usage
+			#=================
+			if (col in ['cpu-0-idle', 'cpu-1-idle']):
+				if (df[col].mean() > 75):
+					print "possible issue in: server "+server+" col "+col
+			elif (col == 'mem-info'):
+				if (df[col].mean() < 3000000):
+					print "possible issue in: server "+server+" col "+col
 		print "============================================"
