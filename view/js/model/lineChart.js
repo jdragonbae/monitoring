@@ -45,7 +45,7 @@ class LineChart {
                     filter: true
                 }],
                 style: {
-                    axisBorderColor: "#dcdcdc",
+                    axisBorderColor: '#dcdcdc',
                     axisBorderWidth: 2.5,
                     titleFontSize: 15,
                     titleFontWeight: 700
@@ -115,7 +115,7 @@ class LineChart {
             getAverageData(function (_averageData) {
                 for (var i = 0; i < _count; i++) {
                     data[i] = {
-                        RealtimeData: 0,
+                        RealtimeData: _averageData,
                         AverageData: _averageData
                     };
                 }
@@ -154,6 +154,9 @@ class LineChart {
                 });
             });
 
+        }
+
+        function checkHealth(){
         }
     }
 };
