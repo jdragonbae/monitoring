@@ -89,7 +89,6 @@ class PieChart {
             getRealtimeData(function (_realtimeData) {
 
                 tookTime = new Date().getTime() - startTime;
-                console.log(_realtimeData);
                 data.shift();
                 data.push({
                     Usage: _realtimeData,
