@@ -4,11 +4,12 @@ class LineChart {
         var type = _type;
         var field = _field;
         var text = _text;
+        var seletor = _selector;
         var data = [];
         var chart;
 
         jui.ready(['chart.builder'], function (builder) {
-            chart = builder('#' + _selector, {
+            chart = builder('#' + seletor, {
                 width: 400,
                 height: 100,
                 axis: {
@@ -55,6 +56,7 @@ class LineChart {
             });
 
             initData(100);
+            checkHealth();
         });
 
         function getRealtimeData(callback) {
@@ -157,6 +159,17 @@ class LineChart {
         }
 
         function checkHealth(){
+            setInterval(function(){
+                var realtimeData = data[data.length-1]['RealtimeData'];
+                var averageData = data[data.length-1]['AverageData'];
+                var diff = realtimeData - averageData;
+                
+                if(diff>=30 || realtimeData>=90 || realtimeData==0){
+                    $('#'+_selector+' > svg').css('background-color','red');
+                }else if(diff>=20 || realtimeData >=80){
+                    $('#'+_selector+' > svg').css('background-color','red');
+                }
+            },2000);
         }
     }
 };
