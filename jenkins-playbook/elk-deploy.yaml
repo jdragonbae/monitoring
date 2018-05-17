@@ -10,13 +10,13 @@
       become_method: su
     - name: kill elk container
       docker_service:
-        project_src: ./deploy-monitoring/elk
+        project_src: ../elk
         state: absent
       become: yes
       become_method: su
     - name: start elk container
       docker_service:
-        project_src: ./deploy-monitoring/elk
+        project_src: ../elk
         build: yes
       become: yes
       become_method: su 

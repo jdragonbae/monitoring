@@ -4,7 +4,7 @@
   tasks:
     - name: kill elk container
       docker_service:
-        project_src: ../hackday-monitoring-deploy/deploy-monitoring/elk
+        project_src: ../elk
         state: absent
       become: yes
       become_method: su

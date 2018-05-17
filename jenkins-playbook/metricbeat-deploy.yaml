@@ -10,7 +10,7 @@
       become_method: su
       ignore_errors: True
     - name: copy metricbeat
-      copy: src=./deploy-monitoring/metricbeat dest=/home/hackday/
+      copy: src=../metricbeat dest=/home/hackday/
     - name: chmod config file
       file:
         path: /home/hackday/metricbeat/metricbeat.yml
