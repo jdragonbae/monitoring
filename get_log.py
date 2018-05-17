@@ -5,7 +5,7 @@ import datetime
 
 
 filename = "hackday.log"
-jenkins_server = "root@106.10.41.96"
+jenkins_server = "root@10.41.3.244"
 
 if not os.path.isfile(filename):
 	with open(filename, 'w') as writefile:
