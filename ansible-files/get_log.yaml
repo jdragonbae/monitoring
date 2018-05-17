@@ -3,7 +3,7 @@
   remote_user: hackday
   tasks:
     - name: create directory
-      command: mkdir /home/hackday/scripts
+      file: path=/home/hackday/scripts state=directory
     - name: copy script
       copy: src={{path}}/get_log.py dest=/home/hackday/scripts/get_log.py
     - name: run script
