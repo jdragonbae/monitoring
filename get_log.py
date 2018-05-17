@@ -5,6 +5,7 @@ import datetime
 
 
 filename = "hackday.log"
+jenkins_server = "root@106.10.41.96"
 
 if not os.path.isfile(filename):
 	with open(filename, 'w') as writefile:
@@ -78,9 +79,24 @@ with open(filename, 'a') as appendfile:
 	appendfile.write("\n")
 
 
+"""
 #=================
 # output
 #=================
 with open(filename, 'r') as readfile:
 	for line in readfile:
 		sys.stdout.write(line)
+"""
+#=================
+# output
+#=================
+with open(filename, 'r') as readfile:
+	output = '"'
+	for line in readfile:
+		output += line
+	
+	output += '"'
+	hostname = ""
+	cmd = subprocess.Popen("hostname --ip-address", shell=True, stdout=subprocess.PIPE)
+	hostname = cmd.stdout.readline().rstrip('\n')
+	cmd = subprocess.Popen("echo "+output+" | sshpass -p gorepdl123 ssh "+jenkins_server+" 'cat > "+hostname+".log'", shell=True, stdout=subprocess.PIPE)
