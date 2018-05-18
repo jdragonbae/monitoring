@@ -4,7 +4,7 @@ After=syslog.target
 
 [Service]
 User=hackday
-ExecStart=python "/home/hackday/scripts/get_log.py"
+ExecStart=/usr/bin/python /home/hackday/scripts/get_log.py
 SuccessExitStatus=143
 
 [Install]
