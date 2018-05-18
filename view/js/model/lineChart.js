@@ -1,10 +1,11 @@
 class LineChart {
-    constructor(_index, _type, _field, _selector, _text) {
+    constructor(_index, _type, _field, _selector, _text, _baseValue = 0) {
         var index = _index;
         var type = _type;
         var field = _field;
-        var text = _text;
         var seletor = _selector;
+        var text = _text;
+        var baseValue = _baseValue;
         var data = [];
         var chart;
 
@@ -55,17 +56,23 @@ class LineChart {
                 render: false
             });
 
-            initData(100);
-            checkHealth();
+            if (!baseValue) {
+                initData(100);
+            } else {
+                getRealtimeData(index, type, baseValue, function (_resp) {
+                    baseValue = _resp;
+                    initData(100);
+                });
+            }
         });
 
-        function getRealtimeData(callback) {
+        function getRealtimeData(_index, _type, _field, callback) {
             client.search({
-                index: index,
-                type: type,
+                index: _index,
+                type: _type,
                 body: {
                     'query': { 'match_all': {} },
-                    '_source': [field, '@timestamp'],
+                    '_source': [_field, '@timestamp'],
                     'size': 1,
                     'sort': [
                         {
@@ -76,17 +83,20 @@ class LineChart {
                     ]
                 }
             }).then(function (resp) {
-                callback(eval('resp.hits.hits[0]._source.' + field).toFixed(3) * 100);
+                if(!baseValue)
+                    callback(eval('resp.hits.hits[0]._source.' + _field).toFixed(3) * 100);
+                else
+                    callback(eval('resp.hits.hits[0]._source.' + _field));
             }, function (err) {
                 console.trace(err.message);
                 callback(0);
             });
         }
 
-        function getAverageData(callback) {
+        function getAverageData(_index, _type, _field, callback) {
             client.search({
-                index: index,
-                type: type,
+                index: _index,
+                type: _type,
                 body: {
                     'query': {
                         'range': {
@@ -100,13 +110,16 @@ class LineChart {
                     'aggs': {
                         'avg_usage': {
                             'avg': {
-                                'field': field
+                                'field': _field
                             }
                         }
                     }
                 }
             }).then(function (_resp) {
-                callback( _resp.aggregations.avg_usage.value.toFixed(3) * 100);
+                if(!baseValue)
+                    callback(_resp.aggregations.avg_usage.value.toFixed(3) * 100);
+                else
+                    callback(_resp.aggregations.avg_usage.value);
             }, function (_err) {
                 console.trace(_err.message);
                 callback(0);
@@ -114,14 +127,17 @@ class LineChart {
         }
 
         function initData(_count) {
-            getAverageData(function (_averageData) {
+            getAverageData(index, type, field, function (_averageData) {
                 for (var i = 0; i < _count; i++) {
+                    if(baseValue)
+                        _averageData = 0;
                     data[i] = {
                         RealtimeData: _averageData,
                         AverageData: _averageData
                     };
                 }
                 updateData();
+                checkHealth();
             });
         }
 
@@ -135,8 +151,13 @@ class LineChart {
 
             startTime = new Date().getTime();
 
-            getRealtimeData(function (_realtimeData) {
-                getAverageData(function (_averageData) {
+            getRealtimeData(index, type, field, function (_realtimeData) {
+                getAverageData(index, type, field, function (_averageData) {
+
+                    if(baseValue){
+                        _realtimeData = getPercentage(baseValue, _realtimeData);
+                        _averageData = getPercentage(baseValue, _averageData);
+                    }
 
                     tookTime = new Date().getTime() - startTime;
 
@@ -152,24 +173,28 @@ class LineChart {
 
                     setTimeout(function () {
                         updateData();
-                    }, 3000 - tookTime);
+                    }, 5000 - tookTime);
                 });
             });
 
         }
 
-        function checkHealth(){
-            setInterval(function(){
-                var realtimeData = data[data.length-1]['RealtimeData'];
-                var averageData = data[data.length-1]['AverageData'];
+        function checkHealth() {
+            setInterval(function () {
+                var realtimeData = data[data.length - 1]['RealtimeData'];
+                var averageData = data[data.length - 1]['AverageData'];
                 var diff = realtimeData - averageData;
-                
-                if(diff>=30 || realtimeData>=90 || realtimeData==0){
-                    $('#'+_selector+' > svg').css('background-color','red');
-                }else if(diff>=20 || realtimeData >=80){
-                    $('#'+_selector+' > svg').css('background-color','red');
+
+                if (diff >= 30 || realtimeData >= 90 || realtimeData == 0) {
+                    $('#' + _selector + ' > svg').css('background-color', 'red');
+                } else if (diff >= 20 || realtimeData >= 80) {
+                    $('#' + _selector + ' > svg').css('background-color', 'red');
                 }
-            },2000);
+            }, 2000);
+        }
+
+        function getPercentage(base, per) {
+            return ((per / base * 100).toFixed(3));
         }
     }
 };

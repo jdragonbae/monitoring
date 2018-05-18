@@ -19,18 +19,18 @@ class PieChart {
                     ]
                 },
                 brush: {
-                    type: "donut",
-                    showText: "inside",
+                    type: 'donut',
+                    showText: 'inside',
                     format: function (k, v) {
-                        return v + "%";
+                        return v + '%';
                     }
                 },
                 widget: [{
-                    type: "title",
+                    type: 'title',
                     text: _text
                 }, {
-                    type: "tooltip",
-                    orient: "left",
+                    type: 'tooltip',
+                    orient: 'left',
                     format: function (data, k) {
                         return {
                             key: names[k],
@@ -38,7 +38,7 @@ class PieChart {
                         }
                     }
                 }, {
-                    type: "legend",
+                    type: 'legend',
                     format: function (k) {
                         return names[k];
                     }
@@ -100,7 +100,7 @@ class PieChart {
 
                 setTimeout(function () {
                     updateData();
-                }, 3000 - tookTime);
+                }, 5000 - tookTime);
             });
         }
     }
