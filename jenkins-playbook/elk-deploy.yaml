@@ -21,7 +21,7 @@
       become: yes
       become_method: su 
     - name: start logging elk
-      shell: 'docker-compose logs -t -f >> ../elk.log&'
+      shell: 'docker-compose logs -t -f >> var/log/elk.log&'
       args:
        chdir: ../elk 
 
