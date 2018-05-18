@@ -7,7 +7,7 @@ import threading
 import urllib, httplib
 
 
-filename = "hackday.log"
+filename = "/var/log/hackday.log"
 jenkins_server = "10.41.3.244"
 
 def create_file():

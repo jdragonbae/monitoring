@@ -3,7 +3,7 @@ Description=getlog
 After=syslog.target
 
 [Service]
-User=hackday
+User=root
 ExecStart=/usr/bin/python /home/hackday/scripts/get_log.py
 SuccessExitStatus=143
 
