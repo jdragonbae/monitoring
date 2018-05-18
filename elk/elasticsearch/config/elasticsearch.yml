@@ -19,5 +19,8 @@ discovery.type: single-node
 http.cors.enabled: true
 http.cors.allow-origin: "*"
 
+## swap off
+bootstrap.memory_lock: true
+
 
 
