@@ -105,11 +105,15 @@ def record_new_log():
 
 		post_attempt_counter = 0
 		while post_attempt_counter < 5:
-			conn.request("POST", "", param, headers)
-			response = conn.getresponse()
-			conn.close()
-			if response.status == 200:
-				break
+			try:
+				conn.request("POST", "", param, headers)
+				response = conn.getresponse()
+				conn.close()
+				if response.status == 200:
+					break
+			except httplib.BadStatusLine:
+				pass
+				
 
 		#=================
 		# loop
