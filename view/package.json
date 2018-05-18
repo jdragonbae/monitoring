@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "ejs": "^2.6.1",
     "elasticsearch-browser": "^15.0.0",
+    "express": "^4.16.3",
     "jquery": "^3.3.1",
-    "jui-chart": "^2.0.6"
+    "jui-chart": "^2.0.4",
+    "jui-core": "^2.0.4"
   },
   "devDependencies": {},
   "scripts": {
