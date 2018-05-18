@@ -12,7 +12,7 @@
       copy: src={{path}}/ansible-files/get_log.service dest=/etc/systemd/system
       become: yes
       become_method: su
-    - name: execute server
+    - name: stop script
       systemd:
         name: hackday 
         state: stopped
@@ -20,5 +20,11 @@
       become_method: su
     - name: reload server
       systemd: daemon_reload=yes
+      become: yes
+      become_method: su
+    - name: start script
+      systemd:
+        name: hackday 
+        state: started
       become: yes
       become_method: su

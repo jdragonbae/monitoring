@@ -112,7 +112,7 @@ def record_new_log():
 				if response.status == 200:
 					break
 			except httplib.BadStatusLine:
-				pass
+				print "Received BadStatusLine"
 				
 
 		#=================
