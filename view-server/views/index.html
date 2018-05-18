@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Deploy-Monitoring</title>
+</head>
+
+<!--css-->
+<link rel='stylesheet' type='text/css' href='css/style.css'>
+
+<!--lib-->
+<script src='jquery/dist/jquery.min.js'></script>
+<script src='elasticsearch-browser/elasticsearch.js'></script>
+<script src='elasticsearch-browser/elasticsearch.jquery.min.js'></script>
+<script src="/jui-core/dist/core.js"></script>
+<script src="/jui-chart/dist/chart.min.js"></script>
+
+<!--model-->
+<script src='js/model/lineChart.js'></script>
+<script src='js/model/pieChart.js'></script>
+
+<script>
+    var client = new $.es.Client({
+        hosts: 'http://106.10.41.29:9200'
+    });
+
+    client.ping({
+        requestTimeout: 30000,
+    }, function (error) {
+        if (error) {
+            console.error('elasticsearch cluster is down!');
+        } else {
+            console.log('All is well');
+            var serverIndex = "<%= index %>";
+            new LineChart('cpu-jy-app00'+serverIndex, 'doc', 'system.cpu.user.pct', 'cpuChart', 'Cpu(%)');
+            new LineChart('memory-jy-app00'+serverIndex, 'doc', 'system.memory.actual.used.pct', 'memoryChart', 'Memory(%)');
+            new PieChart('filesystem-jy-app00'+serverIndex,'doc', 'system.filesystem.used.pct','diskChart','Disk(%)');
+            new LineChart('jmx-jy-app00'+serverIndex, 'doc', 'jolokia.metrics.memory.heap_usage.used', 'jmxChart', 'Jvm Heap Memory(%)','jolokia.metrics.memory.heap_usage.max');
+        }
+    });
+</script>
+
+</head>
+
+<body>
+    <div id='dashboard'>
+        <div id='cpuChart'>
+        </div>
+        <div id='memoryChart'>
+        </div>
+        <div id='diskChart'>
+        </div>
+        <div id='jmxChart'>
+        </div>
+    </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Deploy-Monitoring</title>
+</head>
+
+<!--css-->
+<link rel='stylesheet' type='text/css' href='css/style.css'>
+
+<!--lib-->
+<script src='jquery/dist/jquery.min.js'></script>
+<script src='elasticsearch-browser/elasticsearch.js'></script>
+<script src='elasticsearch-browser/elasticsearch.jquery.min.js'></script>
+<script src="/jui-core/dist/core.js"></script>
+<script src="/jui-chart/dist/chart.min.js"></script>
+
+<!--model-->
+<script src='js/model/lineChart.js'></script>
+<script src='js/model/pieChart.js'></script>
+
+<script>
+    var client = new $.es.Client({
+        hosts: 'http://106.10.41.29:9200'
+    });
+
+    client.ping({
+        requestTimeout: 30000,
+    }, function (error) {
+        if (error) {
+            console.error('elasticsearch cluster is down!');
+        } else {
+            console.log('All is well');
+            for(var idx=1; idx<=9; idx++){
+                new LineChart('memory-jy-app00'+idx, 'doc', 'system.memory.actual.used.pct', 'chart'+idx, 'Memory'+idx+'(%)');
+            }
+        }
+    });
+</script>
+
+</head>
+
+<body>
+    <div id='dashboard'>
+        <div id='chart1'>
+        </div>
+        <div id='chart2'>
+        </div>
+        <div id='chart3'>
+        </div>
+        <div id='chart4'>
+        </div>
+        <div id='chart5'>
+        </div>
+        <div id='chart6'>
+        </div>
+        <div id='chart7'>
+        </div>
+        <div id='chart8'>
+        </div>
+        <div id='chart9'>
+        </div>
+    </div>
+    </div>
+
+</body>
+
+</html>
