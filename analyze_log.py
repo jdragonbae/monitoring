@@ -28,6 +28,9 @@ for server in servers:
 			if column not in number_type_logs:
 				df.drop(column, axis=1, inplace=True)
 		
+		if df.shape[0] < 300:
+			print "Less than 300 logs have been recorded in the past hour. Results might not be reliable."
+
 		for col in df.columns.tolist():
 			
 			#=================
