@@ -8,40 +8,14 @@ from scipy import stats
 number_type_logs = ["cpu-0-idle", "cpu-1-idle", "free-mem", "rxpck/s", "txpck/s"]
 servers = ['10.41.2.31', '10.41.1.25', '10.41.5.49', '10.41.2.41', '10.41.0.232', '10.41.5.67', '10.41.2.84', '10.41.0.162', '10.41.5.74']
 
-def report_progress(filename, progress):
-    """progress: 0-10"""
-    stdscr.addstr(0, 0, "Moving file: {0}".format(filename))
-    stdscr.addstr(1, 0, "Total progress: [{1:10}] {0}%".format(progress * 10, "#" * progress))
-    stdscr.refresh()
+def report_progress(cpu0avg, cpu0cur, cpu1avg, cpu1cur, memavg, memcur, rxavg, rxcur, txavg, txcur):
 
-if __name__ == "__notmain__":
-    stdscr = curses.initscr()
-    curses.noecho()
-    curses.cbreak()
-
-    try:
-        for i in range(10):
-            report_progress("file_{0}.txt".format(i), i+1)
-            time.sleep(0.5)
-    finally:
-        curses.echo()
-        curses.nocbreak()
-        curses.endwin()
-
-def report_progress_cpu(cpu0avg, cpu0cur, cpu1avg, cpu1cur):
-    """
-    stdscr.addstr(0, 0, "CPU 0 Idle - Average: {0}".format(cpu0avg))
-    stdscr.addstr(1, 0, "CPU 0 Idle - Current: {0}".format(cpu0cur))
-    stdscr.addstr(2, 0, "CPU 1 Idle - Average: {0}".format(cpu1avg))
-    stdscr.addstr(3, 0, "CPU 1 Idle - Current: {0}".format(cpu1cur))
-    stdscr.refresh()
-    """
     counter = 0
     for server, state in cpu0avg.iteritems():
-        stdscr.addstr(counter+0, 0, "["+server+"] CPU 0 Idle - Average: {0}".format(cpu0avg[server]))
-        stdscr.addstr(counter+1, 0, "["+server+"] CPU 0 Idle - Current: {0}".format(cpu0cur[server]))
-        stdscr.addstr(counter+2, 0, "["+server+"] CPU 1 Idle - Average: {0}".format(cpu1avg[server]))
-        stdscr.addstr(counter+3, 0, "["+server+"] CPU 1 Idle - Current: {0}".format(cpu1cur[server]))
+        stdscr.addstr(counter+0, 0, "====================[\t"+server+"\t]====================")        
+        stdscr.addstr(counter+1, 0, "[CPU 0 Idle]\tAverage: {0}\tCurrent: {0}".format(cpu0avg[server], cpu0cur[server]))
+        stdscr.addstr(counter+2, 0, "[CPU 1 Idle]\tAverage: {0}\tCurrent: {0}".format(cpu1avg[server], cpu1cur[server]))
+        stdscr.addstr(counter+3, 0, "[Free Mem]\tAverage: {0}\tCurrent: {0}".format(cpu1avg[server], cpu1cur[server]))
         counter += 4
     stdscr.refresh()
 
@@ -55,6 +29,12 @@ if __name__ == "__main__":
     cpu0cur = {}
     cpu1avg = {}
     cpu1cur = {}
+    memavg = {}
+    memcur = {}
+    rxavg = {}
+    rxcur = {}
+    txavg = {}
+    txcur = {}
 
     try:
         for server in servers:
@@ -88,8 +68,27 @@ if __name__ == "__main__":
                         cpu1avg[server] = str.format('{:.3f}', df[col].mean())
                         cpu1cur[server] = str.format('{:.3f}', df[col].iloc[-1])
 
+                    #=================
+                    # mem
+                    #=================
+
+                    elif col == 'free-mem':
+                        memavg[server] = str.format('{:.3f}', df[col].mean())
+                        memcur[server] = str.format('{:.3f}', df[col].iloc[-1])
+
+                    #=================
+                    # network
+                    #=================
+
+                    elif col == 'rxpck/s':
+                        rxavg[server] = str.format('{:.3f}', df[col].mean())
+                        rxcur[server] = str.format('{:.3f}', df[col].iloc[-1])
+                    elif col == 'txpck/s':
+                        txavg[server] = str.format('{:.3f}', df[col].mean())
+                        txcur[server] = str.format('{:.3f}', df[col].iloc[-1])
+
         for i in range(0, 20): # arbitrary number of times, this should be fixed
-            report_progress_cpu(cpu0avg, cpu0cur, cpu1avg, cpu1cur)
+            report_progress(cpu0avg, cpu0cur, cpu1avg, cpu1cur, memavg, memcur)
             time.sleep(1)
 
     finally:
