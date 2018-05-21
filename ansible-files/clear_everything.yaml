@@ -18,6 +18,8 @@
       file:
         state: absent
         path: /var/log/hackday.log
+        become: yes
+        become_method: su
     - name: Stop script
       systemd:
         name: get_log
