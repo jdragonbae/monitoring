@@ -2,10 +2,18 @@
 - hosts: appservers
   remote_user: hackday
   tasks:
-    - name: Clear directory
+    - name: Clear hackday_ansible directory
       file:
         state: absent
         path: /home/hackday/hackday_ansible
+    - name: Clear scripts directory
+      file:
+        state: absent
+        path: /home/hackday/scripts
+    - name: Clear log_collection directory
+      file:
+        state: absent
+        path: /home/hackday/log_collection
     - name: Stop script
       systemd:
         name: get_log
