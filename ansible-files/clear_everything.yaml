@@ -1,0 +1,18 @@
+---
+- hosts: appservers
+  remote_user: hackday
+  tasks:
+    - name: Clear directory
+      file:
+        state: absent
+        path: /home/hackday/hackday_ansible
+    - name: Stop script
+      systemd:
+        name: get_log
+        state: stopped
+      become: yes
+      become_method: su
+    - name: Reload server
+      systemd: daemon_reload=yes
+      become: yes
+      become_method: su
