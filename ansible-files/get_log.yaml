@@ -3,15 +3,9 @@
   remote_user: hackday
   tasks:
     - name: Create directory
-      file: path=/home/hackday/log_collection state=directory
-    - name: Clear logs directory
-      file:
-        state: absent
-        path: /home/hackday/log_collection/logs
-    - name: Create logs directory
-      file: path=/home/hackday/log_collection/logs state=directory
+      file: path=/home/hackday/hackday_ansible state=directory
     - name: Copy script
-      copy: src={{path}}/get_log.py dest=/home/hackday/log_collection/get_log.py
+      copy: src={{path}}/get_log.py dest=/home/hackday/hackday_ansible/get_log.py
     - name: Copy service unit
       copy: src={{path}}/ansible-files/get_log.service dest=/etc/systemd/system
       become: yes
