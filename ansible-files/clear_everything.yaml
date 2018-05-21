@@ -15,11 +15,7 @@
         state: absent
         path: /home/hackday/log_collection
     - name: Clear /var/log log
-      file:
-        state: absent
-        path: /var/log/hackday.log
-        become: yes
-        become_method: su
+      command: sudo find /var/log/hackday.log -type f -delete
     - name: Stop script
       systemd:
         name: get_log
