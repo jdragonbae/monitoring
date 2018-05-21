@@ -14,8 +14,10 @@
     #   file:
     #     state: absent
     #     path: /home/hackday/log_collection
-    - name: Clear /var/log log
-      command: sudo rm /var/log/hackday.log
+    - name: Delete /var/log log
+      file:
+        path: /var/log/hackday.log
+        state: absent
     - name: Stop script
       systemd:
         name: get_log
