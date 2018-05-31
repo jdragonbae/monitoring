@@ -367,8 +367,7 @@ output.logstash:
   # The Logstash hosts
   # 10.83.32.168
   # 218.147.137.196
-  hosts: ["10.41.0.125:5000"]
-
+  hosts: ["218.147.137.196:5000"]
   # Number of workers per Logstash host.
   #worker: 1
 
